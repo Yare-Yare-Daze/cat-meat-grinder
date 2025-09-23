@@ -1,0 +1,11 @@
+{
+    "asset": "bd4a14a0766a4ea489aa697d696231ea",
+    "fileName": "019971b5-0505-7f14-b905-cf8a71c056d1_Preview.png",
+    "prompt": "chess board, 2 colors, black, white",
+    "negativePrompt": "",
+    "model": "575ecf67-4425-4939-97b9-5e138b8ee234",
+    "modelName": "Unity Texture2D",
+    "customSeed": 1520544997,
+    "w3CTraceId": "1d74eae32d6ce25b748e82ea49ed8b56",
+    "refinementMode": "Generation"
+}

@@ -1,0 +1,74 @@
+using System;
+using UnityEngine;
+
+public class PickUpController : MonoBehaviour
+{
+    [Header("Pickup Settings")] 
+    [SerializeField] private Transform _holdArea;
+    
+    private GameObject _heldObject;
+    private Rigidbody _heldObjectRB;
+
+    [Header("Physics Parameters")] 
+    [SerializeField] private float _pickupRange = 5.0f;
+    [SerializeField] private float _pickupForce = 150.0f;
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (_heldObject == null)
+            {
+                RaycastHit hit;
+                if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, _pickupRange))
+                {
+                    PickupObject(hit.transform.gameObject);
+                }
+            }
+        }
+
+        if (Input.GetMouseButton(0) && _heldObject != null)
+        {
+            MoveObject();
+        }
+
+        if (Input.GetMouseButtonUp(0) && _heldObject != null)
+        {
+            DropObject();
+        }
+    }
+
+    private void MoveObject()
+    {
+        if (Vector3.Distance(_heldObject.transform.position, _holdArea.position) > 0.1f)
+        {
+            Vector3 moveDirection = (_holdArea.position - _heldObject.transform.position);
+            _heldObjectRB.AddForce(moveDirection * _pickupForce);
+        }
+    }
+
+    private void PickupObject(GameObject pickupObject)
+    {
+        if (pickupObject.TryGetComponent(out ItemSelectable itemSelectable))
+        {
+            _heldObjectRB = itemSelectable.ItemRigidbody;
+            _heldObjectRB.useGravity = false;
+            _heldObjectRB.linearDamping = 10;
+            _heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+
+            _heldObjectRB.transform.parent = _holdArea;
+            _heldObject = pickupObject;
+        }
+    }
+    
+    private void DropObject()
+    {
+        _heldObjectRB.useGravity = true;
+        _heldObjectRB.linearDamping = 1;
+        _heldObjectRB.constraints = RigidbodyConstraints.None;
+
+        _heldObjectRB.transform.parent = null;
+        _heldObject = null;
+        
+    }
+}
