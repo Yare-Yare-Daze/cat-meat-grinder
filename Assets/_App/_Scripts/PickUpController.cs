@@ -28,17 +28,28 @@ public class PickUpController : MonoBehaviour
                     PickupObject(hit.transform.gameObject);
                 }
             }
+            else
+            {
+                DropObject();
+            }
         }
 
-        if (Input.GetMouseButton(0) && _heldObject != null)
+        if (Input.GetMouseButtonDown(1) && _heldObject != null)
+        {
+            ThrowObject();
+        }
+
+        if (_heldObject != null)
         {
             MoveObject();
         }
 
-        if (Input.GetMouseButtonUp(0) && _heldObject != null)
-        {
-            DropObject();
-        }
+        // if (Input.GetMouseButtonUp(0) && _heldObject != null)
+        // {
+        //     DropObject();
+        // }
+        
+        
     }
 
     private void MoveObject()
@@ -72,6 +83,18 @@ public class PickUpController : MonoBehaviour
 
         _heldObjectRB.transform.parent = null;
         _heldObject = null;
+    }
+
+    private void ThrowObject()
+    {
+        _heldObjectRB.useGravity = true;
+        _heldObjectRB.linearDamping = 1;
+        _heldObjectRB.constraints = RigidbodyConstraints.None;
         
+        var throwVector = _heldObject.transform.position - transform.position;
+        _heldObjectRB.AddForce(throwVector * 10f, ForceMode.Impulse);
+        
+        _heldObjectRB.transform.parent = null;
+        _heldObject = null;
     }
 }
