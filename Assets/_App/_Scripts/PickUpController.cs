@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PickUpController : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private PlayerRaycaster _raycaster;
+    
     [Header("Pickup Settings")] 
     [SerializeField] private Transform _holdArea;
     
@@ -10,7 +13,7 @@ public class PickUpController : MonoBehaviour
     private Rigidbody _heldObjectRB;
 
     [Header("Physics Parameters")] 
-    [SerializeField] private float _pickupRange = 5.0f;
+    //[SerializeField] private float _pickupRange = 5.0f;
     [SerializeField] private float _pickupForce = 150.0f;
 
     private void Update()
@@ -20,7 +23,7 @@ public class PickUpController : MonoBehaviour
             if (_heldObject == null)
             {
                 RaycastHit hit;
-                if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, _pickupRange))
+                if (_raycaster.CheckRaycastHit(out hit))
                 {
                     PickupObject(hit.transform.gameObject);
                 }
