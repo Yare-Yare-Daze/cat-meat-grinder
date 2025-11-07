@@ -22,11 +22,16 @@ public class PickUpController : MonoBehaviour
         {
             if (_heldObject == null)
             {
-                RaycastHit hit;
-                if (_raycaster.CheckRaycastHit(out hit))
+                if (_raycaster.TryGetComponentFromAllHits(out ItemSelectable itemSelectable))
                 {
-                    PickupObject(hit.transform.gameObject);
+                    PickUpSelectableObject(itemSelectable);
                 }
+                
+                // RaycastHit hit;
+                // if (_raycaster.TryGetRaycastHit(out hit))
+                // {
+                //     PickupObject(hit.transform.gameObject);
+                // }
             }
             else
             {
@@ -59,6 +64,18 @@ public class PickUpController : MonoBehaviour
             Vector3 moveDirection = (_holdArea.position - _heldObject.transform.position);
             _heldObjectRB.AddForce(moveDirection * _pickupForce);
         }
+    }
+
+    private void PickUpSelectableObject(ItemSelectable itemSelectable)
+    {
+        Debug.Log("Picked up object " + itemSelectable.name);
+        _heldObjectRB = itemSelectable.ItemRigidbody;
+        _heldObjectRB.useGravity = false;
+        _heldObjectRB.linearDamping = 10;
+        _heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+
+        _heldObjectRB.transform.parent = _holdArea;
+        _heldObject = itemSelectable.gameObject;
     }
 
     private void PickupObject(GameObject pickupObject)

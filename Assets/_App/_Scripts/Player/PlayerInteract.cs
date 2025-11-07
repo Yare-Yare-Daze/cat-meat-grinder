@@ -27,7 +27,7 @@ public class PlayerInteract : MonoBehaviour
             return;
         }
         
-        if (_raycaster.CheckRaycastHit(out var hit))
+        if (_raycaster.TryGetRaycastHit(out var hit))
         {
             if (hit.transform.gameObject.TryGetComponent(out ItemInteractable itemInteractable))
             {

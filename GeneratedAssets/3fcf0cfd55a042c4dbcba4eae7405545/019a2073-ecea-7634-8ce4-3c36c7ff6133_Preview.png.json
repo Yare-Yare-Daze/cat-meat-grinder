@@ -1,0 +1,11 @@
+{
+    "asset": "3fcf0cfd55a042c4dbcba4eae7405545",
+    "fileName": "019a2073-ecea-7634-8ce4-3c36c7ff6133_Preview.png",
+    "prompt": "Cat fur, orange, fluffy, kitty, paws, meow",
+    "negativePrompt": "ugly, stone, bad",
+    "model": "44ec3749-963a-44b1-aa54-dc19f6ed8ab2",
+    "modelName": "Unity Texture2D",
+    "customSeed": 1605013228,
+    "w3CTraceId": "cc24bb2b36fe38058aea1446953dcf51",
+    "refinementMode": "Generation"
+}
