@@ -15,6 +15,7 @@ public class Cat : MonoBehaviour
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
         transform.eulerAngles = Vector3.zero;
+        //_rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         transform.position = positionToPlace;
     }
 }

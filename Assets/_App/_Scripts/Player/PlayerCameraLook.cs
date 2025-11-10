@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class PlayerCameraLook : MonoBehaviour
 {
@@ -11,19 +12,52 @@ public class PlayerCameraLook : MonoBehaviour
     
     private float xRotation;
     private float yRotation;
+
+    private bool _isPlayerCanvas;
+    
+    [Inject] private CanvasesManager _canvasesManager;
     
     private void Awake()
     {
         //controls = new PlayerControls();
         //controls.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
         //controls.Player.Look.canceled += _ => lookInput = Vector2.zero;
+
+        _canvasesManager.OnCanvasTypeChanged += OnCanvasTypeChangedHandler;
+    }
+
+    private void OnCanvasTypeChangedHandler(CanvasType canvasType)
+    {
+        switch (canvasType)
+        {
+            case CanvasType.PlayerCanvas:
+                SetPlayerCursor();
+                break;
+            case CanvasType.ComputerCanvas:
+                DisablePlayerCursor();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(canvasType), canvasType, null);
+        }
     }
 
     private void Start()
     {
+        SetPlayerCursor();
+    }
+
+    private void SetPlayerCursor()
+    {
+        _isPlayerCanvas = true;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
+    }
+
+    private void DisablePlayerCursor()
+    {
+        _isPlayerCanvas = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     // private void OnEnable() => controls.Enable();
@@ -31,6 +65,8 @@ public class PlayerCameraLook : MonoBehaviour
     
     void Update()
     {
+        if(!_isPlayerCanvas) return;
+        
         // Читаем мышь
         //float mouseX = lookInput.x * sensitivity * Time.deltaTime;
         float mouseX = Input.GetAxisRaw("Mouse X") * sensitivity * Time.deltaTime;
