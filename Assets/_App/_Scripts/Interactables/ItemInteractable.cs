@@ -6,4 +6,9 @@ public class ItemInteractable : MonoBehaviour
     {
         Debug.Log($"{name} Interact");
     }
+
+    public virtual void StopInteract()
+    {
+        Debug.Log($"{name} StopInteract");
+    }
 }

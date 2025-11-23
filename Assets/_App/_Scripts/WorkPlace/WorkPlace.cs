@@ -16,6 +16,8 @@ public class WorkPlace : MonoBehaviour
     private float _currentTime = 0f;
 
     public event Action<bool> OnIsWorkingChanged;
+    public event Action<int> OnItemsProducedChanged; 
+    public event Action OnNewItemsProduced;
 
     public int ItemsProduced
     {
@@ -24,6 +26,7 @@ public class WorkPlace : MonoBehaviour
         {
             _itemsProduced = value;
             Debug.Log($"Work place {name} produced items changed: {_itemsProduced}.");
+            OnItemsProducedChanged?.Invoke(_itemsProduced);
         }
     }
     
@@ -55,6 +58,7 @@ public class WorkPlace : MonoBehaviour
         {
             _currentTime = 0f;
             ItemsProduced++;
+            OnNewItemsProduced.Invoke();
         }
     }
 

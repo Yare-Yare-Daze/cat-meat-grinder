@@ -20,6 +20,12 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
+        if (_currentInteractable != null && Input.GetKeyDown(KeyCode.Escape))
+        {
+            _currentInteractable.StopInteract();
+            _currentInteractable = null;
+        }
+        
         if (!_raycaster.gameObject.activeSelf)
         {
             CanInteract = false;

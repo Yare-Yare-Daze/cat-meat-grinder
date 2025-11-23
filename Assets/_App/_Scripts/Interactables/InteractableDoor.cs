@@ -10,14 +10,17 @@ public class InteractableDoor : ItemInteractable
     {
         base.Interact();
         
-        _isTeleported = !_isTeleported;
+        _isTeleported = true;
         if (_isTeleported)
         {
             _playerWorkshop.ActivateWorkshop();
         }
-        else
-        {
-            _playerWorkshop.DeactivateWorkshop();
-        }
+    }
+
+    public override void StopInteract()
+    {
+        base.StopInteract();
+        _isTeleported = false;
+        _playerWorkshop.DeactivateWorkshop();
     }
 }
