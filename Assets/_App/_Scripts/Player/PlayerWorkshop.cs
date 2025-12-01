@@ -50,8 +50,8 @@ public class PlayerWorkshop : MonoBehaviour
             var workPlace = _workPlacesMainTR.GetChild(i).GetComponent<WorkPlace>();
             _workPlaces.Add(workPlace);
             _workPlaces[i].OnIsWorkingChanged += OnIsWorkingChangedHandler;
-            _workPlaces[i].OnItemsProducedChanged += OnItemsProducedChangedHandler;
-            _workPlaces[i].OnNewItemsProduced += OnNewItemsProducedHandler;
+            //_workPlaces[i].OnItemsProducedChanged += OnItemsProducedChangedHandler;
+            //_workPlaces[i].OnNewItemsProduced += OnNewItemsProducedHandler;
         }
     }
 

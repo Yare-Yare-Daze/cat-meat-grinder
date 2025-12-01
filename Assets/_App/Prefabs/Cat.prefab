@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7752710944244833480}
   - component: {fileID: 4363066644491802079}
   - component: {fileID: 8557925337753161868}
+  - component: {fileID: 2383592819036962614}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
@@ -167,3 +168,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d53977277f42e4a823eee4b3804ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cat
+  _catType: 0
+--- !u!114 &2383592819036962614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044357353569480597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f03d5afde6b90a489f73055d08cbd0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CatVisual
+  _catMaterials:
+  - {fileID: 2100000, guid: 2acac5fd96922b14a825c7650ab2354f, type: 2}
+  - {fileID: 2100000, guid: 7dad4436580a78140a0665dd1f3e00eb, type: 2}
+  - {fileID: 2100000, guid: 3fcf0cfd55a042c4dbcba4eae7405545, type: 2}
+  _cat: {fileID: 8557925337753161868}
+  _meshRenderer: {fileID: 4276548228935288483}

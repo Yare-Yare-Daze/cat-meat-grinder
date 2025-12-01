@@ -16,4 +16,12 @@ public class CatsSpawner : MonoBehaviour
         var newCat = Instantiate(_catPrefab, _spawnPointTR);
         newCat.transform.SetParent(null);
     }
+
+    public void SpawnNewCat(CatType catType)
+    {
+        var newCat = Instantiate(_catPrefab, _spawnPointTR);
+        newCat.transform.SetParent(null);
+        var cat =  newCat.GetComponent<Cat>();
+        cat.SetCatType(catType);
+    }
 }
