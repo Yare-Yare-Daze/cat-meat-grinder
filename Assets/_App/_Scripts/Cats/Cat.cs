@@ -11,18 +11,18 @@ public enum CatType
 
 public class Cat : MonoBehaviour
 {
-    [SerializeField] private CatType _catType;
+    [SerializeField] protected CatType _catType;
     
-    [Inject] private GameManager _gameManager;
+    [Inject] protected GameManager _gameManager;
     
-    private Rigidbody _rigidbody;
+    protected Rigidbody _rigidbody;
     
     public event Action<CatType> OnCatTypeChange; 
 
     public CatType CatType
     {
         get => _catType;
-        private set
+        protected set
         {
             _catType = value;
             OnCatTypeChange?.Invoke(CatType);
@@ -32,7 +32,6 @@ public class Cat : MonoBehaviour
     private void Awake()
     {
         Initialize();
-        SetCatType(_catType);
     }
 
     public void SetCatType(CatType newCatType)
@@ -40,9 +39,10 @@ public class Cat : MonoBehaviour
         CatType = newCatType;
     }
 
-    private void Initialize()
+    protected virtual void Initialize()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        SetCatType(_catType);
     }
 
     public void SetOnWorkPlace(Transform workPlace)
@@ -53,5 +53,10 @@ public class Cat : MonoBehaviour
         //_rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         transform.position = workPlace.position;
         transform.parent = workPlace;
+    }
+
+    public void ResetFromWorkPlace()
+    {
+        transform.parent = null;
     }
 }

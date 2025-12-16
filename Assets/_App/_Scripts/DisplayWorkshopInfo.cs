@@ -12,15 +12,38 @@ public class DisplayWorkshopInfo : MonoBehaviour
     [Header("Other")]
     [SerializeField] private PlayerWorkshop _playerWorkshop;
     [SerializeField] private Light _pointLight;
-    [SerializeField] private Color _activeColor;
-    [SerializeField] private Color _inactiveColor;
 
     private void Awake()
     {
         _playerWorkshop.OnCountProductChanged += OnCountProductChangedHandler;
         _playerWorkshop.OnIsBusyChanged += OnIsBusyChangedHandler;
+        _playerWorkshop.OnEfficiencyChanged += OnEfficiencyChangedHandler;
+        _playerWorkshop.OnCatTypeChanged += OnCatTypeChangedHandler;
 
         OnIsBusyChangedHandler(false);
+    }
+
+    private void OnCatTypeChangedHandler(CatType catType)
+    {
+        switch (catType)
+        {
+            case CatType.Black:
+                _pointLight.color = Color.black;
+                break;
+            case CatType.White:
+                _pointLight.color = Color.white;
+                break;
+            case CatType.Orange:
+                _pointLight.color = Color.orange;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(catType), catType, null);
+        }
+    }
+
+    private void OnEfficiencyChangedHandler(float newEfficiency)
+    {
+        _efficiencyText.text = $"Efficiency: {newEfficiency.ToString("f2")}";
     }
 
     private void OnCountProductChangedHandler(int newValue)
@@ -33,11 +56,9 @@ public class DisplayWorkshopInfo : MonoBehaviour
         if (newValue)
         {
             _pointLight.enabled = true;
-            _pointLight.color = Color.green;
         }
         else
         {
-            _pointLight.color = Color.white;
             _pointLight.enabled = false;
         }
     }

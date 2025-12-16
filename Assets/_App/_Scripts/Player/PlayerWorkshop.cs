@@ -6,17 +6,22 @@ using Zenject;
 public class PlayerWorkshop : MonoBehaviour
 {
     [SerializeField] private Camera _teleportedCamera;
-    [SerializeField] private Transform _workPlacesMainTR;
+    //[SerializeField] private Transform _workPlacesMainTR;
 
     [Inject] private Player _player;
     
-    private List<WorkPlace> _workPlaces = new List<WorkPlace>();
+    //private List<WorkPlace> _workPlaces = new List<WorkPlace>();
+    [SerializeField] private WorkPlace _workPlace;
 
     private int _countProduct;
     private bool _isBusy;
+    private float _efficiency;
 
     public event Action<int> OnCountProductChanged;
     public event Action<bool> OnIsBusyChanged;
+    public event Action<CatType> OnCatTypeChanged; 
+    
+    public event Action<float> OnEfficiencyChanged; 
 
     public bool IsBusy
     {
@@ -45,14 +50,28 @@ public class PlayerWorkshop : MonoBehaviour
 
     private void Initialize()
     {
-        for (int i = 0; i < _workPlacesMainTR.childCount; i++)
-        {
-            var workPlace = _workPlacesMainTR.GetChild(i).GetComponent<WorkPlace>();
-            _workPlaces.Add(workPlace);
-            _workPlaces[i].OnIsWorkingChanged += OnIsWorkingChangedHandler;
-            //_workPlaces[i].OnItemsProducedChanged += OnItemsProducedChangedHandler;
-            //_workPlaces[i].OnNewItemsProduced += OnNewItemsProducedHandler;
-        }
+        // for (int i = 0; i < _workPlacesMainTR.childCount; i++)
+        // {
+        //     var workPlace = _workPlacesMainTR.GetChild(i).GetComponent<WorkPlace>();
+        //     _workPlaces.Add(workPlace);
+        //     _workPlaces[i].OnIsWorkingChanged += OnIsWorkingChangedHandler;
+        //     //_workPlaces[i].OnItemsProducedChanged += OnItemsProducedChangedHandler;
+        //     //_workPlaces[i].OnNewItemsProduced += OnNewItemsProducedHandler;
+        // }
+
+        _workPlace.OnEfficiencyChanged += OnEfficiencyChangedHandler;
+        _workPlace.OnIsWorkingChanged += OnIsWorkingChangedHandler;
+        _workPlace.OnCatTypeChanged += OnCatTypeChangedHandler;
+    }
+
+    private void OnCatTypeChangedHandler(CatType catType)
+    {
+        OnCatTypeChanged?.Invoke(catType);
+    }
+
+    private void OnEfficiencyChangedHandler(float newEfficiency)
+    {
+        OnEfficiencyChanged?.Invoke(newEfficiency);
     }
 
     private void OnIsWorkingChangedHandler(bool isWorking)
@@ -72,15 +91,7 @@ public class PlayerWorkshop : MonoBehaviour
 
     private bool CheckIsWorkshopBusy()
     {
-        bool isBusy = false;
-        foreach (var workPlace in _workPlaces)
-        {
-            if (workPlace.IsWorking)
-            {
-                isBusy = true;
-                continue;
-            }
-        }
+        bool isBusy = _workPlace.IsWorking;
 
         return isBusy;
     }

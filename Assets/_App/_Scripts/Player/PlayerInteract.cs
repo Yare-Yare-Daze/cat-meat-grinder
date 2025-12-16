@@ -8,6 +8,21 @@ public class PlayerInteract : MonoBehaviour
     
     private bool _canInteract;
     private ItemInteractable _currentInteractable;
+    private ItemInteractable _activatedItemInteractable;
+    
+    private bool _isInteracting;
+
+    public bool IsInteracting
+    {
+        get => _isInteracting;
+        private set
+        {
+            _isInteracting = value;
+            OnIsInteractingChanged?.Invoke(value);
+        }
+    }
+
+    public event Action<bool> OnIsInteractingChanged;
 
     public bool CanInteract
     {
@@ -20,10 +35,12 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
-        if (_currentInteractable != null && Input.GetKeyDown(KeyCode.Escape))
+        if (_activatedItemInteractable != null && Input.GetKeyDown(KeyCode.Escape))
         {
-            _currentInteractable.StopInteract();
-            _currentInteractable = null;
+            _activatedItemInteractable.OnStopInteract -= DisableInteract;
+            _activatedItemInteractable.StopInteract();
+            _activatedItemInteractable = null;
+            IsInteracting = false;
         }
         
         if (!_raycaster.gameObject.activeSelf)
@@ -47,9 +64,19 @@ public class PlayerInteract : MonoBehaviour
             }
         }
         
-        if (Input.GetMouseButtonDown(0) && CanInteract)
+        if (_activatedItemInteractable == null && Input.GetMouseButtonDown(0) && CanInteract)
         {
             _currentInteractable.Interact();
+            _activatedItemInteractable = _currentInteractable;
+            _activatedItemInteractable.OnStopInteract += DisableInteract;
+            IsInteracting = true;
         }
+    }
+
+    private void DisableInteract()
+    {
+        _activatedItemInteractable.OnStopInteract -= DisableInteract;
+        _activatedItemInteractable = null;
+        IsInteracting = false;
     }
 }

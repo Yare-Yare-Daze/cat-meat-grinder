@@ -1,6 +1,7 @@
 using System; 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _groundDrag;
     [SerializeField] private float _airMultiplier;
     
+    [Inject] private Player _player;
+
+    private bool _canMove = true;
     private bool _isGrounded;
     private bool _readyToJump;
     
@@ -22,8 +26,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        _player.PlayerInteract.OnIsInteractingChanged += OnIsInteractingChangedHandler;
+        
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.freezeRotation = true;
+    }
+
+    private void OnIsInteractingChangedHandler(bool isInteracting)
+    {
+        _canMove = !isInteracting;
     }
 
     private void ReadInput()
@@ -55,6 +66,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if(!_canMove) return;
+        
         _isGrounded = Physics.Raycast(transform.position, Vector3.down, _playerHeight * 0.5f + 0.2f, _ground);
         
         ReadInput();

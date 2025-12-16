@@ -5,15 +5,20 @@ using UnityEngine;
 public class CatVisual : MonoBehaviour
 {
     [SerializeField] private List<Material> _catMaterials;
-    [SerializeField] private Cat _cat;
-    [SerializeField] private MeshRenderer _meshRenderer;
+    [SerializeField] protected Cat _cat;
+    [SerializeField] protected MeshRenderer _meshRenderer;
 
     private void Awake()
+    {
+        Initialize();
+    }
+
+    protected virtual void Initialize()
     {
         _cat.OnCatTypeChange += OnCatTypeChangeHandler;
     }
 
-    private void OnCatTypeChangeHandler(CatType newCatType)
+    protected virtual void OnCatTypeChangeHandler(CatType newCatType)
     {
         _meshRenderer.material = _catMaterials[(int)newCatType];
     }

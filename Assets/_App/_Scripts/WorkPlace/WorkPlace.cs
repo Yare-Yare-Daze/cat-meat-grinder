@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class WorkPlace : MonoBehaviour
 {
-    // [Header("Cat places")]
-    // [SerializeField] private Transform _workPlaceBlack;
-    // [SerializeField] private Transform _workPlaceWhite;
-    // [SerializeField] private Transform _workPlaceOrange;
+    [Header("Cat places")]
+    [SerializeField] private Transform _workPlaceBlack;
+    [SerializeField] private Transform _workPlaceWhite;
+    [SerializeField] private Transform _workPlaceOrange;
 
     [Header("Work params")] 
     [SerializeField] private float _timePerItem;
@@ -21,29 +21,24 @@ public class WorkPlace : MonoBehaviour
     private List<Cat> _workingCatsOranges = new List<Cat>();
     
     private bool _isWorking;
-
-    //private int _itemsProduced;
     private float _currentTime = 0f;
-
     private float _totalEfficiency = 0f;
-
     private CatType _catTypeWorkPlace;
+    
 
     public event Action<bool> OnIsWorkingChanged;
     public event Action<float> OnEfficiencyChanged; 
-    //public event Action<int> OnItemsProducedChanged; 
-    public event Action OnNewItemsProduced;
+    public event Action<CatType> OnCatTypeChanged; 
 
-    // public int ItemsProduced
-    // {
-    //     get { return _itemsProduced; }
-    //     private set
-    //     {
-    //         _itemsProduced = value;
-    //         Debug.Log($"Work place {name} produced items changed: {_itemsProduced}.");
-    //         OnItemsProducedChanged?.Invoke(_itemsProduced);
-    //     }
-    // }
+    public CatType CatTypeWorkPlace
+    {
+        get => _catTypeWorkPlace;
+        private set
+        {
+            _catTypeWorkPlace = value;
+            OnCatTypeChanged?.Invoke(CatTypeWorkPlace);
+        }
+    }
 
     public float TotalEfficiency
     {
@@ -82,8 +77,6 @@ public class WorkPlace : MonoBehaviour
         else
         {
             _currentTime = 0f;
-            //ItemsProduced++;
-            //OnNewItemsProduced.Invoke();
         }
     }
 
@@ -91,23 +84,23 @@ public class WorkPlace : MonoBehaviour
     {
         if (_workingCatsList.Count == 0)
         {
-            _catTypeWorkPlace = cat.CatType;
+            CatTypeWorkPlace = cat.CatType;
         }
 
         switch (cat.CatType)
         {
             case CatType.Black:
-                
+                cat.SetOnWorkPlace(_workPlaceBlack);
                 _workingCatsBlacks.Add(cat);
                 break;
             
             case CatType.White:
-                
+                cat.SetOnWorkPlace(_workPlaceWhite);
                 _workingCatsWhites.Add(cat);
                 break;
             
             case CatType.Orange:
-                
+                cat.SetOnWorkPlace(_workPlaceOrange);
                 _workingCatsOranges.Add(cat);
                 break;
             
@@ -137,7 +130,8 @@ public class WorkPlace : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
+        
+        cat.ResetFromWorkPlace();
         CountTotalEfficiency();
         _workingCatsList.Remove(cat);
     }
