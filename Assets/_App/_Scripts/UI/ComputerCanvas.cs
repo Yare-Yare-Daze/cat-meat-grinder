@@ -10,6 +10,7 @@ public class ComputerCanvas : MonoBehaviour
     [SerializeField] private List<Sprite> _catsTypeSprites;
     [SerializeField] private Button _closeButton;
     [SerializeField] private Transform _catBuyPanelsMainTR;
+    [SerializeField] private Slider _ableToSpawnSlider;
     
     [Inject] private CanvasesManager _canvasesManager;
     [Inject] private CatsSpawner _catsSpawner;
@@ -25,9 +26,32 @@ public class ComputerCanvas : MonoBehaviour
             
             //_catBuyPanels[i].ChooseButtonClickedEvent.AddListener(());
             _catBuyPanels[i].OnCatTypeSelected += OnCatTypeSelectedHandler;
+            _catBuyPanels[i].SetInteractableButton(true);
         }
         
         UpdateCatsInfo();
+
+        _catsSpawner.OnTimerValueChanged += OnTimerValueChangedHandler;
+    }
+
+    private void OnTimerValueChangedHandler(float value)
+    {
+        _ableToSpawnSlider.value = value / _catsSpawner.TimeToAbleSpawn;
+        
+        if (_ableToSpawnSlider.value >= _ableToSpawnSlider.maxValue)
+        {
+            foreach (var catBuyPanel in _catBuyPanels)
+            {
+                catBuyPanel.SetInteractableButton(true);
+            }
+        }
+        else
+        {
+            foreach (var catBuyPanel in _catBuyPanels)
+            {
+                catBuyPanel.SetInteractableButton(false);
+            }
+        }
     }
 
     private void UpdateCatsInfo()

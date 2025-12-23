@@ -20,6 +20,11 @@ public class CatBuyPanel : MonoBehaviour
         _chooseButton.onClick.AddListener(OnButtonCatSelectClicked);
     }
 
+    public void SetInteractableButton(bool isInteractable)
+    {
+        _chooseButton.interactable = isInteractable;
+    }
+
     public void SetCatInfo(int index, Sprite catSprite, CatType catType)
     {
         _nameText.text = $"Cat {index}";

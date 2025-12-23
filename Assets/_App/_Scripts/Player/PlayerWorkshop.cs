@@ -6,11 +6,10 @@ using Zenject;
 public class PlayerWorkshop : MonoBehaviour
 {
     [SerializeField] private Camera _teleportedCamera;
-    //[SerializeField] private Transform _workPlacesMainTR;
+    [SerializeField] private PickUpController _workshopPickUpController;
 
     [Inject] private Player _player;
     
-    //private List<WorkPlace> _workPlaces = new List<WorkPlace>();
     [SerializeField] private WorkPlace _workPlace;
 
     private int _countProduct;
@@ -99,6 +98,7 @@ public class PlayerWorkshop : MonoBehaviour
     public void ActivateWorkshop()
     {
         Debug.Log("ActivateWorkshop");
+        _player.PickUpController.TransferItemSelectableToNewPickUp(_workshopPickUpController);
         _player.PlayerMainCamera.gameObject.SetActive(false);
         _teleportedCamera.gameObject.SetActive(true);
     }
@@ -106,6 +106,7 @@ public class PlayerWorkshop : MonoBehaviour
     public void DeactivateWorkshop()
     {
         Debug.Log("DeactivateWorkshop");
+        _workshopPickUpController.TransferItemSelectableToNewPickUp(_player.PickUpController);
         _player.PlayerMainCamera.gameObject.SetActive(true);
         _teleportedCamera.gameObject.SetActive(false);
     }

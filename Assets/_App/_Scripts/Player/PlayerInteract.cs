@@ -42,15 +42,26 @@ public class PlayerInteract : MonoBehaviour
             _activatedItemInteractable = null;
             IsInteracting = false;
         }
-        
+
         if (!_raycaster.gameObject.activeSelf)
         {
             CanInteract = false;
             _currentInteractable = null;
             return;
         }
-        
-        if (_raycaster.TryGetRaycastHit(out var hit))
+
+        if (_raycaster.TryGetComponentFromAllHits(out ItemInteractable interactable))
+        {
+            CanInteract = true;
+            _currentInteractable = interactable;
+        }
+        else
+        {
+            CanInteract = false;
+            _currentInteractable = null;
+        }
+
+        /*if (_raycaster.TryGetRaycastHit(out var hit))
         {
             if (hit.transform.gameObject.TryGetComponent(out ItemInteractable itemInteractable))
             {
@@ -62,7 +73,7 @@ public class PlayerInteract : MonoBehaviour
                 CanInteract = false;
                 _currentInteractable = null;
             }
-        }
+        }*/
         
         if (_activatedItemInteractable == null && Input.GetMouseButtonDown(0) && CanInteract)
         {

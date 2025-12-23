@@ -28,7 +28,7 @@ public class DisplayWorkshopInfo : MonoBehaviour
         switch (catType)
         {
             case CatType.Black:
-                _pointLight.color = Color.black;
+                _pointLight.color = Color.red;
                 break;
             case CatType.White:
                 _pointLight.color = Color.white;

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class PickUpController : MonoBehaviour
 {
@@ -9,109 +10,125 @@ public class PickUpController : MonoBehaviour
     [Header("Pickup Settings")] 
     [SerializeField] private Transform _holdArea;
     
-    private GameObject _heldObject;
-    private Rigidbody _heldObjectRB;
-
     [Header("Physics Parameters")] 
-    //[SerializeField] private float _pickupRange = 5.0f;
     [SerializeField] private float _pickupForce = 150.0f;
+    
+    [Inject] private Player _player;
+    
+    private ItemSelectable _currentItemSelectable;
 
+    public ItemSelectable CurrentItemSelectable => _currentItemSelectable;
+    
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (_heldObject == null)
+            if (_currentItemSelectable == null)
             {
                 if (_raycaster.TryGetComponentFromAllHits(out ItemSelectable itemSelectable))
                 {
                     PickUpSelectableObject(itemSelectable);
                 }
-                
-                // RaycastHit hit;
-                // if (_raycaster.TryGetRaycastHit(out hit))
-                // {
-                //     PickupObject(hit.transform.gameObject);
-                // }
             }
             else
             {
-                DropObject();
+                if(_player.PlayerInteract.CanInteract == false) DropObject();
             }
         }
 
-        if (Input.GetMouseButtonDown(1) && _heldObject != null)
+        if (Input.GetMouseButtonDown(1) && _currentItemSelectable != null)
         {
             ThrowObject();
         }
+    }
 
-        if (_heldObject != null)
+    private void FixedUpdate()
+    {
+        if (_currentItemSelectable != null)
         {
             MoveObject();
         }
+    }
 
-        // if (Input.GetMouseButtonUp(0) && _heldObject != null)
-        // {
-        //     DropObject();
-        // }
+    public void SetItemSelectableFromOutside(ItemSelectable itemSelectable)
+    {
+        if(_currentItemSelectable != null) return;
         
+        Debug.Log($"Get item to {this.name}, and set to position");
         
+        PickUpSelectableObject(itemSelectable);
+        _currentItemSelectable.TeleportToPosition(_holdArea.position);
+    }
+
+    public void TransferItemSelectableToNewPickUp(PickUpController newPickUpController)
+    {
+        Debug.Log($"Transfer item from {this.name} to {newPickUpController.name}");
+        if(_currentItemSelectable == null) return;
+        
+        newPickUpController.SetItemSelectableFromOutside(_currentItemSelectable);
+        
+        DropObject();
     }
 
     private void MoveObject()
     {
-        if (Vector3.Distance(_heldObject.transform.position, _holdArea.position) > 0.1f)
+        if (Vector3.Distance(_currentItemSelectable.transform.position, _holdArea.position) > 0.1f)
         {
-            Vector3 moveDirection = (_holdArea.position - _heldObject.transform.position);
-            _heldObjectRB.AddForce(moveDirection * _pickupForce);
+            Vector3 moveDirection = (_holdArea.position - _currentItemSelectable.transform.position);
+            _currentItemSelectable.ItemRigidbody.AddForce(moveDirection * _pickupForce);
         }
     }
 
     private void PickUpSelectableObject(ItemSelectable itemSelectable)
     {
         Debug.Log("Picked up object " + itemSelectable.name);
-        _heldObjectRB = itemSelectable.ItemRigidbody;
-        _heldObjectRB.useGravity = false;
-        _heldObjectRB.linearDamping = 10;
-        _heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+        _currentItemSelectable = itemSelectable;
+        var rb = _currentItemSelectable.ItemRigidbody;
+        
+        rb.useGravity = false;
+        rb.linearDamping = 10;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-        _heldObjectRB.transform.parent = _holdArea;
-        _heldObject = itemSelectable.gameObject;
+        _currentItemSelectable.transform.parent = _holdArea;
     }
 
     private void PickupObject(GameObject pickupObject)
     {
         if (pickupObject.TryGetComponent(out ItemSelectable itemSelectable))
         {
-            _heldObjectRB = itemSelectable.ItemRigidbody;
-            _heldObjectRB.useGravity = false;
-            _heldObjectRB.linearDamping = 10;
-            _heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+            _currentItemSelectable = itemSelectable;
+            var rb = _currentItemSelectable.ItemRigidbody;
+            rb.useGravity = false;
+            rb.linearDamping = 10;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-            _heldObjectRB.transform.parent = _holdArea;
-            _heldObject = pickupObject;
+            rb.transform.parent = _holdArea;
         }
     }
     
     private void DropObject()
     {
-        _heldObjectRB.useGravity = true;
-        _heldObjectRB.linearDamping = 1;
-        _heldObjectRB.constraints = RigidbodyConstraints.None;
+        Debug.Log("Dropped object " + _currentItemSelectable.name);
+        var rb = _currentItemSelectable.ItemRigidbody;
+        rb.useGravity = true;
+        rb.linearDamping = 1;
+        rb.constraints = RigidbodyConstraints.None;
 
-        _heldObjectRB.transform.parent = null;
-        _heldObject = null;
+        _currentItemSelectable.transform.parent = null;
+        _currentItemSelectable = null;
     }
 
     private void ThrowObject()
     {
-        _heldObjectRB.useGravity = true;
-        _heldObjectRB.linearDamping = 1;
-        _heldObjectRB.constraints = RigidbodyConstraints.None;
+        var rb = _currentItemSelectable.ItemRigidbody;
+        rb.useGravity = true;
+        rb.linearDamping = 1;
+        rb.constraints = RigidbodyConstraints.None;
         
-        var throwVector = _heldObject.transform.position - transform.position;
-        _heldObjectRB.AddForce(throwVector * 10f, ForceMode.Impulse);
+        var throwVector = _currentItemSelectable.transform.position - transform.position;
+        rb.AddForce(throwVector * 10f, ForceMode.Impulse);
         
-        _heldObjectRB.transform.parent = null;
-        _heldObject = null;
+        _currentItemSelectable.transform.parent = null;
+        _currentItemSelectable = null;
     }
 }

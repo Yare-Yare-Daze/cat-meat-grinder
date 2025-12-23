@@ -20,9 +20,6 @@ public class PlayerRaycaster : MonoBehaviour
     
     private void Update()
     {
-        
-        
-        
         if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out _hit, _raycastDistance))
         {
             _isHit = true;
