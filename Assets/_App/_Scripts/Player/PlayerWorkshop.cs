@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+public enum WorkshopBusyState
+{
+    None,
+    Busy,
+    Error
+}
+
 public class PlayerWorkshop : MonoBehaviour
 {
     [SerializeField] private Camera _teleportedCamera;
@@ -15,22 +22,33 @@ public class PlayerWorkshop : MonoBehaviour
     private int _countProduct;
     private bool _isBusy;
     private float _efficiency;
+    private WorkshopBusyState _workshopState;
 
     public event Action<int> OnCountProductChanged;
-    public event Action<bool> OnIsBusyChanged;
+    public event Action<WorkshopBusyState> OnIsBusyChanged;
     public event Action<CatType> OnCatTypeChanged; 
     
-    public event Action<float> OnEfficiencyChanged; 
+    public event Action<float> OnEfficiencyChanged;
 
-    public bool IsBusy
+    public WorkshopBusyState WorkshopState
     {
-        get => _isBusy;
+        get { return _workshopState; }
         private set
         {
-            _isBusy = value;
+            _workshopState = value;
             OnIsBusyChanged?.Invoke(value);
         }
     }
+
+    // public bool IsBusy
+    // {
+    //     get => _isBusy;
+    //     private set
+    //     {
+    //         _isBusy = value;
+    //         OnIsBusyChanged?.Invoke(value);
+    //     }
+    // }
 
     public int CountProduct
     {
@@ -75,7 +93,8 @@ public class PlayerWorkshop : MonoBehaviour
 
     private void OnIsWorkingChangedHandler(bool isWorking)
     {
-        IsBusy = CheckIsWorkshopBusy();
+        WorkshopState = isWorking ? WorkshopBusyState.Busy : WorkshopBusyState.None;
+        //IsBusy = CheckIsWorkshopBusy();
     }
     
     private void OnItemsProducedChangedHandler(int newValue)

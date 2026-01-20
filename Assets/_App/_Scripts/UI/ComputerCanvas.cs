@@ -36,7 +36,7 @@ public class ComputerCanvas : MonoBehaviour
 
     private void OnTimerValueChangedHandler(float value)
     {
-        _ableToSpawnSlider.value = value / _catsSpawner.TimeToAbleSpawn;
+        _ableToSpawnSlider.value = value / _catsSpawner.TargetTimeToSpawn;
         
         if (_ableToSpawnSlider.value >= _ableToSpawnSlider.maxValue)
         {

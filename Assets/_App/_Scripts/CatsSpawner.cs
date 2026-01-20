@@ -1,17 +1,31 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Zenject;
 
 public class CatsSpawner : MonoBehaviour
 {
-    [SerializeField] private float _timeToAbleSpawn;
+    [SerializeField] private float _baseTimeToAbleSpawn = 1f;
     [SerializeField] private GameObject _catPrefab;
     [SerializeField] private Transform _spawnPointTR;
 
     private bool _canSpawn;
     private float _timer;
+    private float _targetTimeToSpawn;
+
+    public float TargetTimeToSpawn
+    {
+        get { return _targetTimeToSpawn; }
+        private set
+        {
+            _targetTimeToSpawn = Mathf.Clamp(value, 0f, float.MaxValue);
+        }
+    }
     
-    public float TimeToAbleSpawn => _timeToAbleSpawn;
+    [Inject] private CatsAmountContainer _amountContainer;
+    
+    public float BaseTimeToAbleSpawn => _baseTimeToAbleSpawn;
     
     public event Action<float> OnTimerValueChanged; 
 
@@ -27,8 +41,16 @@ public class CatsSpawner : MonoBehaviour
     
     private void Awake()
     {
-        Timer = TimeToAbleSpawn;
+        TargetTimeToSpawn = _baseTimeToAbleSpawn;
+        Timer = BaseTimeToAbleSpawn;
         _canSpawn = true;
+        
+        _amountContainer.OnCatsAmountChanged += OnCatsAmountChangedHandler;
+    }
+    
+    private void OnCatsAmountChangedHandler(int amount)
+    {
+        TargetTimeToSpawn = _baseTimeToAbleSpawn + Mathf.Clamp(amount / 2f, 0f, 30f);
     }
 
     private IEnumerator TimerToAbleSpawn()
@@ -36,7 +58,7 @@ public class CatsSpawner : MonoBehaviour
         Timer = 0f;
         _canSpawn = false;
         
-        while (Timer < _timeToAbleSpawn)
+        while (Timer < TargetTimeToSpawn)
         {
             Timer += Time.deltaTime;
             yield return new WaitForEndOfFrame();
@@ -52,6 +74,8 @@ public class CatsSpawner : MonoBehaviour
         var newCat = Instantiate(_catPrefab, _spawnPointTR);
         newCat.transform.SetParent(null);
         StartCoroutine(TimerToAbleSpawn());
+        
+        _amountContainer.AddCat(newCat.GetComponent<Cat>());
     }
 
     public void SpawnNewCat(CatType catType)
@@ -63,5 +87,7 @@ public class CatsSpawner : MonoBehaviour
         var cat =  newCat.GetComponent<Cat>();
         cat.SetCatType(catType);
         StartCoroutine(TimerToAbleSpawn());
+        
+        _amountContainer.AddCat(cat);
     }
 }

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DisplayWorkshopInfo : MonoBehaviour
 {
@@ -11,16 +13,21 @@ public class DisplayWorkshopInfo : MonoBehaviour
     
     [Header("Other")]
     [SerializeField] private PlayerWorkshop _playerWorkshop;
-    [SerializeField] private Light _pointLight;
+    [SerializeField] private Light _workStatusLight;
+    [SerializeField] private List<MeshRenderer> _doorsMeshRenderers;
+    
+    private Color _initialDoorColor;
 
     private void Awake()
     {
+        _initialDoorColor = _doorsMeshRenderers[0].material.color;
+        
         _playerWorkshop.OnCountProductChanged += OnCountProductChangedHandler;
         _playerWorkshop.OnIsBusyChanged += OnIsBusyChangedHandler;
         _playerWorkshop.OnEfficiencyChanged += OnEfficiencyChangedHandler;
         _playerWorkshop.OnCatTypeChanged += OnCatTypeChangedHandler;
 
-        OnIsBusyChangedHandler(false);
+        OnIsBusyChangedHandler(WorkshopBusyState.None);
     }
 
     private void OnCatTypeChangedHandler(CatType catType)
@@ -28,16 +35,27 @@ public class DisplayWorkshopInfo : MonoBehaviour
         switch (catType)
         {
             case CatType.Black:
-                _pointLight.color = Color.red;
+                SetDoorsInColor(Color.black);
+                //_workStatusLight.color = Color.red;
                 break;
             case CatType.White:
-                _pointLight.color = Color.white;
+                SetDoorsInColor(Color.white);
+                //_workStatusLight.color = Color.white;
                 break;
             case CatType.Orange:
-                _pointLight.color = Color.orange;
+                SetDoorsInColor(Color.orange);
+                //_workStatusLight.color = Color.orange;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(catType), catType, null);
+        }
+    }
+
+    private void SetDoorsInColor(Color color)
+    {
+        foreach (var doorMR in _doorsMeshRenderers)
+        {
+            doorMR.material.color = color;
         }
     }
 
@@ -51,15 +69,24 @@ public class DisplayWorkshopInfo : MonoBehaviour
         _itemsCountText.text = $"Items count: {newValue.ToString()}";
     }
     
-    private void OnIsBusyChangedHandler(bool newValue)
+    private void OnIsBusyChangedHandler(WorkshopBusyState newValue)
     {
-        if (newValue)
+        switch (newValue)
         {
-            _pointLight.enabled = true;
-        }
-        else
-        {
-            _pointLight.enabled = false;
+            case WorkshopBusyState.None:
+                _workStatusLight.enabled = false;
+                SetDoorsInColor(_initialDoorColor);
+                break;
+            case WorkshopBusyState.Busy:
+                _workStatusLight.enabled = true;
+                _workStatusLight.color = Color.green;
+                break;
+            case WorkshopBusyState.Error:
+                _workStatusLight.enabled = true;
+                _workStatusLight.color = Color.red;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
         }
     }
 }
