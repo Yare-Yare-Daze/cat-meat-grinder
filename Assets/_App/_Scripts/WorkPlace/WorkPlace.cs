@@ -138,7 +138,11 @@ public class WorkPlace : MonoBehaviour
 
     private void CountTotalEfficiency()
     {
-        if (_workingCatsList.Count <= 0) return;
+        if (_workingCatsList.Count <= 0) 
+        {
+            TotalEfficiency = 0f;
+            return;
+        }
         
         TotalEfficiency = _baseEfficiency;
         var baseCats = 0;

@@ -1,0 +1,23 @@
+CREDIT ME WHEN USING THE MODEL
+https://www.youtube.com/channel/UCvOmsXbVy3qELUWAMdmipUw
+CREDIT ME WHEN USING THE MODEL
+
+
+(for blender users importing "El Gato (with rig)") your rig might have extra bones on the end of El Gato's limbs
+
+to solve that issue do the following actions:
+
+1) Select the Skeleton (Armature) (while in object mode)
+2) click the button on the top left corner labeled "Object mode"
+3) choose "Edit mode"
+4) select the excess bones
+5) [delete] -> select "bones" NOT "dissovle bones"
+6) Press "Edit mode" and switch to "Pose Mode" to start animating
+
+
+more tips will be shared soon on my channel (Boomfist), enjoy
+
+
+CREDIT ME WHEN USING THE MODEL
+https://www.youtube.com/channel/UCvOmsXbVy3qELUWAMdmipUw
+CREDIT ME WHEN USING THE MODEL

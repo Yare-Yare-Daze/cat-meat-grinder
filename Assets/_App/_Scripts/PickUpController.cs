@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -16,6 +17,7 @@ public class PickUpController : MonoBehaviour
     [Inject] private Player _player;
     
     private ItemSelectable _currentItemSelectable;
+    private bool _teleportedFreeze;
 
     public ItemSelectable CurrentItemSelectable => _currentItemSelectable;
     
@@ -44,7 +46,7 @@ public class PickUpController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_currentItemSelectable != null)
+        if (_currentItemSelectable != null && !_teleportedFreeze)
         {
             MoveObject();
         }
@@ -58,7 +60,16 @@ public class PickUpController : MonoBehaviour
         
         PickUpSelectableObject(itemSelectable);
         _currentItemSelectable.TeleportToPosition(_holdArea.position);
+
+        //StartCoroutine(TeleportedFreeze());
     }
+
+    // private IEnumerator TeleportedFreeze()
+    // {
+    //     _teleportedFreeze = true;
+    //     yield return new WaitForSeconds(1.1f);
+    //     _teleportedFreeze = false;
+    // }
 
     public void TransferItemSelectableToNewPickUp(PickUpController newPickUpController)
     {
@@ -75,7 +86,8 @@ public class PickUpController : MonoBehaviour
         if (Vector3.Distance(_currentItemSelectable.transform.position, _holdArea.position) > 0.1f)
         {
             Vector3 moveDirection = (_holdArea.position - _currentItemSelectable.transform.position);
-            _currentItemSelectable.ItemRigidbody.AddForce(moveDirection * _pickupForce);
+            //_currentItemSelectable.ItemRigidbody.AddForce(moveDirection * _pickupForce);
+            _currentItemSelectable.ItemRigidbody.position = Vector3.Lerp(_currentItemSelectable.transform.position, _holdArea.position, Time.deltaTime * 10f);
         }
     }
 
